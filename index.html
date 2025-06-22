@@ -90,6 +90,13 @@
       font-weight: bold;
       cursor: pointer;
     }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.08); opacity: 0.8; }
+  }
+
+
   </style>
 </head>
 <body class="text-white font-sans"> 
@@ -139,6 +146,18 @@
     <span class="close" onclick="document.getElementById('imageModal').style.display='none'">&times;</span>
     <div class="modal-content" id="modalImageContainer"></div>
   </div>
+ <a href="https://mail.google.com/mail/?view=cm&fs=1&to=mrterminalwiz@gmail.com&su=Need%20to%20Advertise%20in%20your%20website"
+   target="_blank"
+   class="fixed bottom-4 left-4 px-4 py-2 rounded-full text-white z-50
+          bg-blue-600/80 backdrop-blur shadow-lg hover:bg-blue-700/90 transition
+          animate-pulse ring-2 ring-blue-400 ring-offset-2 ring-offset-slate-900 text-sm font-semibold">
+  🚀 Advertise Here
+</a>
+
+
+
+
+
 
   <script>
     const gallery = document.getElementById("gallery");
@@ -148,7 +167,8 @@
       const card = document.createElement("div");
       card.className = "card";
       card.innerHTML = `
-        <img src="${entry.image}" alt="AI Image ${index + 1}" class="w-full h-72 object-cover cursor-pointer" onclick="showFullImage('${entry.image}')">
+        <img src="${entry.image}" alt="AI Image ${index + 1}" class="w-full h-72 sm:h-64 object-cover cursor-pointer" onclick="showFullImage('${entry.image}')">
+
         <button onclick="recreate('${encodeURIComponent(entry.prompt)}')" class="recreate-btn">Recreate</button>
       `;
       gallery.appendChild(card);
@@ -174,6 +194,12 @@
     window.addEventListener("scroll", () => {
       scrollBtn.style.display = window.scrollY > 300 ? "block" : "none";
     });
+
+    // Add this to your script block
+document.getElementById("imageModal").addEventListener("click", function(e) {
+  if (e.target === this) this.style.display = "none";
+});
+
   </script>
 </body>
 </html>
