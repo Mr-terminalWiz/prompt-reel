@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Upload | PromptReel</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+    }
+    header, footer {
+      background: rgba(30, 41, 59, 0.95);
+      backdrop-filter: blur(6px);
+    }
+    .upload-btn {
+      background: linear-gradient(to right, #3b82f6, #2563eb);
+    }
+    .upload-btn:hover {
+      background: linear-gradient(to right, #2563eb, #1d4ed8);
+    }
+  </style>
+</head>
+<body class="text-white font-sans">
+  <header class="p-4 flex justify-between items-center shadow-md">
+    <h1 class="text-3xl font-bold text-blue-400 tracking-wide">📤 Upload Prompt</h1>
+    <a href="index.html" class="text-white bg-gray-700 px-3 py-1 rounded hover:bg-gray-600">← Back to Gallery</a>
+  </header>
+
+  <main class="p-6 max-w-xl mx-auto">
+    <form id="uploadForm" class="space-y-6 bg-gray-800 p-6 rounded-xl shadow-lg">
+      <div>
+        <label class="block mb-1 font-medium">Upload Image</label>
+        <input type="file" accept="image/*" required id="imageInput" class="block w-full bg-gray-900 border border-gray-600 p-2 rounded text-sm">
+      </div>
+      <div>
+        <label class="block mb-1 font-medium">Prompt</label>
+        <textarea required id="promptInput" rows="4" class="block w-full p-2 bg-gray-900 text-white border border-gray-600 rounded text-sm" placeholder="Type the exact prompt used to generate the image..."></textarea>
+      </div>
+      <button type="submit" class="upload-btn px-4 py-2 rounded text-white font-semibold w-full">Upload</button>
+    </form>
+    <p id="uploadMsg" class="text-green-400 text-sm mt-4 text-center hidden">✅ Upload Successful! Redirecting...</p>
+  </main>
+
+  <footer class="mt-10 text-center text-sm text-gray-400 p-4 border-t border-gray-700">
+    Powered by PromptReel | Share & Recreate Freely 🚀
+  </footer>
+
+  <script>
+    const form = document.getElementById("uploadForm");
+    const msg = document.getElementById("uploadMsg");
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const file = document.getElementById("imageInput").files[0];
+      const prompt = document.getElementById("promptInput").value;
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        const newEntry = { image: reader.result, prompt };
+        const uploads = JSON.parse(localStorage.getItem("promptReelUploads")) || [];
+        uploads.push(newEntry);
+        localStorage.setItem("promptReelUploads", JSON.stringify(uploads));
+
+        msg.classList.remove("hidden");
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 1500);
+      };
+      reader.readAsDataURL(file);
+    });
+  </script>
+</body>
+</html>
+
