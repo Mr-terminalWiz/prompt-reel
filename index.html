@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PromptReel | AI Prompt Gallery</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .line-clamp-3 {
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+    }
+    body {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+    }
+    header, footer {
+      background: rgba(30, 41, 59, 0.95);
+      backdrop-filter: blur(6px);
+    }
+    .card {
+      background: linear-gradient(145deg, #1f2937, #111827);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.5s ease;
+    }
+    .card.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .recreate-btn {
+      background: linear-gradient(to right, #3b82f6, #2563eb);
+    }
+    .recreate-btn:hover {
+      background: linear-gradient(to right, #2563eb, #1d4ed8);
+    }
+    #scrollTopBtn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #2563eb;
+      color: white;
+      padding: 10px 14px;
+      border-radius: 9999px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      z-index: 50;
+      display: none;
+    }
+    #scrollTopBtn:hover {
+      background: #1d4ed8;
+    }
+  </style>
+</head>
+<body class="text-white font-sans">
+  <header class="p-4 flex justify-between items-center shadow-md">
+    <h1 class="text-3xl font-bold text-blue-400 tracking-wide">🎨 PromptReel</h1>
+    <a href="upload.html" class="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded text-white transition font-medium shadow">Upload Image</a>
+  </header>
+
+  <!-- Ad space top -->
+  <section class="bg-gray-800 text-center text-sm text-gray-300 p-3 border-b border-gray-700">
+    <p>🔔 Sponsored: Your ad could be here - manually or via Google Ads</p>
+    <div class="mt-2 h-16 flex items-center justify-center rounded bg-gray-700 border border-dashed border-gray-500">
+      <p>Google Ads Area</p>
+    </div>
+  </section>
+
+  <!-- Main content with side ad -->
+  <main class="p-6 max-w-screen-xl mx-auto">
+    <div class="flex flex-col lg:flex-row gap-6">
+      <!-- Gallery Section -->
+      <div class="flex-1">
+        <h2 class="text-2xl mb-6 font-semibold text-center lg:text-left text-blue-300">🖼️ Explore Community Creations</h2>
+        <div id="gallery" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+      </div>
+
+      <!-- Side Ad Section -->
+      <aside class="w-full lg:w-64 bg-gray-800 rounded-lg p-4 text-center text-sm text-gray-400 shadow">
+        <h3 class="font-semibold text-white mb-3 text-lg">📢 Sponsored</h3>
+        <div class="h-60 bg-gray-700 mb-4 flex items-center justify-center rounded border border-dashed border-gray-600">Google Ad Slot</div>
+        <div class="h-60 bg-gray-700 flex items-center justify-center rounded border border-dashed border-gray-600">Manual Banner</div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- Ad space bottom -->
+  <footer class="mt-10 p-4 text-center text-sm text-gray-400 border-t border-gray-700">
+    <p>🚀 Built for open sharing. No login required. Recreate freely!</p>
+    <div class="mt-2 h-16 flex items-center justify-center rounded bg-gray-700 border border-dashed border-gray-500">
+      <p>Google Ads Area</p>
+    </div>
+  </footer>
+
+  <button id="scrollTopBtn" onclick="window.scrollTo({ top: 0, behavior: 'smooth' });">↑</button>
+
+  <script>
+    const gallery = document.getElementById("gallery");
+    const images = JSON.parse(localStorage.getItem("promptReelUploads")) || [];
+
+    images.reverse().forEach((entry, index) => {
+      const card = document.createElement("div");
+      card.className = "card rounded-lg shadow-lg overflow-hidden hover:shadow-2xl transition transform hover:scale-105";
+      card.innerHTML = `
+        <img src="${entry.image}" alt="AI Image ${index + 1}" class="w-full h-72 object-cover">
+        <div class="p-4 flex justify-center">
+          <button onclick="recreate('${encodeURIComponent(entry.prompt)}')" class="recreate-btn px-4 py-2 rounded text-sm text-white font-semibold shadow">Recreate</button>
+        </div>
+      `;
+      gallery.appendChild(card);
+
+      // Animate appearance
+      setTimeout(() => {
+        card.classList.add("show");
+      }, 100 * index);
+    });
+
+    function recreate(encodedPrompt) {
+      const url = `https://chat.openai.com/?model=gpt-4o&prompt=${encodedPrompt}`;
+      window.open(url, '_blank');
+    }
+
+    const scrollBtn = document.getElementById("scrollTopBtn");
+    window.addEventListener("scroll", () => {
+      scrollBtn.style.display = window.scrollY > 300 ? "block" : "none";
+    });
+  </script>
+</body>
+</html>
