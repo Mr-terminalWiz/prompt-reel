@@ -6,12 +6,6 @@
   <title>PromptReel | AI Prompt Gallery</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    .line-clamp-3 {
-      overflow: hidden;
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-    }
     body {
       background: linear-gradient(135deg, #0f172a, #1e293b);
     }
@@ -20,20 +14,34 @@
       backdrop-filter: blur(6px);
     }
     .card {
-      background: linear-gradient(145deg, #1f2937, #111827);
+      position: relative;
+      background: transparent;
+      overflow: hidden;
       opacity: 0;
       transform: translateY(20px);
       transition: all 0.5s ease;
+      border-radius: 0.75rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     }
     .card.show {
       opacity: 1;
       transform: translateY(0);
     }
     .recreate-btn {
-      background: linear-gradient(to right, #3b82f6, #2563eb);
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(37, 99, 235, 0.8);
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      color: white;
+      font-weight: 600;
+      font-size: 0.875rem;
+      backdrop-filter: blur(4px);
     }
     .recreate-btn:hover {
-      background: linear-gradient(to right, #2563eb, #1d4ed8);
+      background: rgba(29, 78, 216, 0.9);
     }
     #scrollTopBtn {
       position: fixed;
@@ -51,9 +59,41 @@
     #scrollTopBtn:hover {
       background: #1d4ed8;
     }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 100;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.9);
+    }
+    .modal-content {
+      margin: 3% auto;
+      display: block;
+      max-width: 500px;
+      width: 75%;
+    }
+    .modal-content img {
+      width: 100%;
+      height: auto;
+      border-radius: 0.5rem;
+    }
+    .close {
+      position: absolute;
+      top: 20px;
+      right: 35px;
+      color: white;
+      font-size: 40px;
+      font-weight: bold;
+      cursor: pointer;
+    }
   </style>
 </head>
-<body class="text-white font-sans">
+<body class="text-white font-sans"> 
+
   <header class="p-4 flex justify-between items-center shadow-md">
     <h1 class="text-3xl font-bold text-blue-400 tracking-wide">🎨 PromptReel</h1>
     <a href="upload.html" class="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded text-white transition font-medium shadow">Upload Image</a>
@@ -95,22 +135,24 @@
 
   <button id="scrollTopBtn" onclick="window.scrollTo({ top: 0, behavior: 'smooth' });">↑</button>
 
+  <div id="imageModal" class="modal">
+    <span class="close" onclick="document.getElementById('imageModal').style.display='none'">&times;</span>
+    <div class="modal-content" id="modalImageContainer"></div>
+  </div>
+
   <script>
     const gallery = document.getElementById("gallery");
     const images = JSON.parse(localStorage.getItem("promptReelUploads")) || [];
 
     images.reverse().forEach((entry, index) => {
       const card = document.createElement("div");
-      card.className = "card rounded-lg shadow-lg overflow-hidden hover:shadow-2xl transition transform hover:scale-105";
+      card.className = "card";
       card.innerHTML = `
-        <img src="${entry.image}" alt="AI Image ${index + 1}" class="w-full h-72 object-cover">
-        <div class="p-4 flex justify-center">
-          <button onclick="recreate('${encodeURIComponent(entry.prompt)}')" class="recreate-btn px-4 py-2 rounded text-sm text-white font-semibold shadow">Recreate</button>
-        </div>
+        <img src="${entry.image}" alt="AI Image ${index + 1}" class="w-full h-72 object-cover cursor-pointer" onclick="showFullImage('${entry.image}')">
+        <button onclick="recreate('${encodeURIComponent(entry.prompt)}')" class="recreate-btn">Recreate</button>
       `;
       gallery.appendChild(card);
 
-      // Animate appearance
       setTimeout(() => {
         card.classList.add("show");
       }, 100 * index);
@@ -119,6 +161,13 @@
     function recreate(encodedPrompt) {
       const url = `https://chat.openai.com/?model=gpt-4o&prompt=${encodedPrompt}`;
       window.open(url, '_blank');
+    }
+
+    function showFullImage(imageUrl) {
+      const modal = document.getElementById("imageModal");
+      const container = document.getElementById("modalImageContainer");
+      container.innerHTML = `<img src="${imageUrl}" alt="Full View">`;
+      modal.style.display = "block";
     }
 
     const scrollBtn = document.getElementById("scrollTopBtn");
